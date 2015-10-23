@@ -1,0 +1,16 @@
+starting esavmp at...
+Thu Oct 22 17:07:38 PYST 2015
+DATACENTER LOADED SUCCESSFULLY
+number of possible solutions (X): 1024
+number of feasible solutions (X_f): 573
+starting esavmp at...
+Thu Oct 22 17:07:39 PYST 2015
+rm -rf results/pareto_*
+
+starting esavmp at...
+Thu Oct 22 17:07:39 PYST 2015
+number of possible solutions (X): 390625
+number of feasible solutions (X_f): 160000
+starting esavmp at...
+Thu Oct 22 17:19:46 PYST 2015
+rm -rf results/pareto_*
