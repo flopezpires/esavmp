@@ -15,7 +15,7 @@
 #include "variation.h"
 #include "common.h"
 
-/* non_dominated_sorting: calculate fitness according to NSGA-II
+/* non_dominated_sorting: calculate fitness according to NSGA-II. Specially designed to consider only first Pareto front
  * parameter: solutions matrix
  * parameter: number of individuals
  * returns: array with the Pareto front
@@ -26,8 +26,6 @@ int* non_dominated_sorting(float ** solutions, int number_of_individuals)
 	int iterator_solution = 0;
 	int iterator_comparision = 0;
 	/* Pareto front identificator initializated to 1 */
-	int actual_pareto_front = 1;
-	/* number of allocated solutions */
 	int solutions_allocated = 0;
 	/* Pareto fronts array */
 	int *pareto_fronts = (int *) malloc (number_of_individuals *sizeof (int));
@@ -40,42 +38,36 @@ int* non_dominated_sorting(float ** solutions, int number_of_individuals)
 	int dominance;
 	int dont_add;
 	int allocated_solutions=0;
-	/* while all the solutions have been evaluated */
-	//while (allocated_solutions < number_of_individuals)
-	//{
-		/* iterate on solutions */
-		for (iterator_solution=0; iterator_solution < number_of_individuals; iterator_solution++)
+	/* iterate on solutions */
+	for (iterator_solution=0; iterator_solution < number_of_individuals; iterator_solution++)
+	{
+		/* flag for a solution to be added */
+		dont_add = 0;
+		/* compare with the actual Pareto front */
+		if (pareto_fronts[iterator_solution]==0)
 		{
-			/* flag for a solution to be added */
-			dont_add = 0;
-			/* compare with the actual Pareto front */
-			if (pareto_fronts[iterator_solution]==0)
+			for (iterator_comparision=0; iterator_comparision < number_of_individuals; iterator_comparision++)
 			{
-				for (iterator_comparision=0; iterator_comparision < number_of_individuals; iterator_comparision++)
+				/* if the solution is not itself, it is not been evaluated or is in the actual Pareto front */
+				if (iterator_solution != iterator_comparision && pareto_fronts[iterator_comparision]==0 || pareto_fronts[iterator_comparision]==actual_pareto_front)
 				{
-					/* if the solution is not itself, it is not been evaluated or is in the actual Pareto front */
-					if (iterator_solution != iterator_comparision && pareto_fronts[iterator_comparision]==0 || pareto_fronts[iterator_comparision]==actual_pareto_front)
+					/* verificate the dominance between both*/
+					dominance = is_dominated(solutions,iterator_solution,iterator_comparision);
+					/* is dominated by a solution that is in the Pareto front, so this solution is not added*/
+					if (dominance == -1)
 					{
-						/* verificate the dominance between both*/
-						dominance = is_dominated(solutions,iterator_solution,iterator_comparision);
-						/* is dominated by a solution that is in the Pareto front, so this solution is not added*/
-						if (dominance == -1)
-						{
-							dont_add = 1;
-							break;
-						}
+						dont_add = 1;
+						break;
 					}
-				}	
-				/* if the solution is not dominated by any other, let's add it to the actual Pareto front */
-				if (dont_add == 0)
-				{
-					pareto_fronts[iterator_solution] = actual_pareto_front;
-					allocated_solutions++;
 				}
+			}	
+			/* if the solution is not dominated by any other, let's add it to the actual Pareto front */
+			if (dont_add == 0)
+			{
+				pareto_fronts[iterator_solution] = actual_pareto_front;
 			}
 		}
-		actual_pareto_front++;
-	//}
+	}
 	return pareto_fronts;
 }
 
